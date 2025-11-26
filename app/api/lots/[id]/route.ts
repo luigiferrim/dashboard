@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { getDb } from "@/lib/db"
 
-// PUT /api/lots/[id] - Atualizar lote
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions)
@@ -113,7 +112,6 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
     return NextResponse.json(formattedLot)
   } catch (error) {
-    console.error("Erro ao atualizar lote:", error)
     return NextResponse.json(
       {
         error: "Erro ao atualizar lote",

@@ -5,7 +5,6 @@ import { getDb } from "@/lib/db"
 import { rateLimit } from "@/lib/rate-limit"
 import { sanitizeString, sanitizeNumber } from "@/lib/sanitize"
 
-// GET /api/lots - Listar todos os lotes
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
@@ -42,7 +41,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/lots - Criar novo lote
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
@@ -52,14 +50,10 @@ export async function POST(request: NextRequest) {
     }
 
     if (!rateLimit(`create-lot:${session.user.id}`, { interval: 5 * 60 * 1000, maxRequests: 30 })) {
-      return NextResponse.json(
-        { error: "Muitas criações de lotes. Aguarde alguns minutos." },
-        { status: 429 }
-      )
+      return NextResponse.json({ error: "Muitas criações de lotes. Aguarde alguns minutos." }, { status: 429 })
     }
 
     const body = await request.json()
-
     const { name, quantity, costPrice, salePrice, supplier, category, variety, process, roastDate, status } = body
 
     if (!name || !quantity || !costPrice || !salePrice || !category) {
@@ -155,11 +149,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(lot, { status: 201 })
   } catch (error) {
-    return NextResponse.json(
-      {
-        error: "Erro ao criar lote. Verifique os dados e tente novamente.",
-      },
-      { status: 500 },
-    )
+    return NextResponse.json({ error: "Erro ao criar lote. Verifique os dados e tente novamente." }, { status: 500 })
   }
 }

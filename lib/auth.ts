@@ -34,25 +34,21 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Credenciais inválidas")
         }
 
-        // Verificar se é formato antigo (SHA-256 sem salt)
-        if (!user.password.includes(':')) {
-          console.log('[v0] Migrando senha antiga para formato PBKDF2 seguro')
+        if (!user.password.includes(":")) {
           const newHash = await hashPassword(credentials.password)
-          
+
           await sql`
             UPDATE users 
             SET password = ${newHash}
             WHERE id = ${user.id}
           `
-          
-          // Log de migração
+
           await sql`
             INSERT INTO logs (user_id, action, details, created_at)
-            VALUES (${user.id}, 'security', 'Senha migrada para formato PBKDF2 seguro', NOW())
+            VALUES (${user.id}, 'security', 'Senha migrada para formato seguro', NOW())
           `
         }
 
-        // Log de login
         await sql`
           INSERT INTO logs (user_id, action, details, created_at)
           VALUES (${user.id}, 'login', 'Usuário fez login', NOW())
